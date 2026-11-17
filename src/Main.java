@@ -1,13 +1,86 @@
-//TIP To <b>Run</b> code, press <shortcut actionId="Run"/> or
-// click the <icon src="AllIcons.Actions.Execute"/> icon in the gutter.
-void main() {
-    //TIP Press <shortcut actionId="ShowIntentionActions"/> with your caret at the highlighted text
-    // to see how IntelliJ IDEA suggests fixing it.
-    IO.println(String.format("Hello and welcome!"));
 
-    for (int i = 1; i <= 5; i++) {
-        //TIP Press <shortcut actionId="Debug"/> to start debugging your code. We have set one <icon src="AllIcons.Debugger.Db_set_breakpoint"/> breakpoint
-        // for you, but you can always add more by pressing <shortcut actionId="ToggleLineBreakpoint"/>.
-        IO.println("i = " + i);
+import java.util.Scanner;
+import model.User;
+import service.UserService;
+
+public class Main {
+
+    public static void main(String[] args) {
+
+        Scanner sc = new Scanner(System.in);
+        UserService userService = new UserService();
+
+        while (true) {
+
+            System.out.println("\n================================");
+            System.out.println("            LOOP IT");
+            System.out.println("       OWN LESS. SHARE MORE.");
+            System.out.println("================================");
+            System.out.println("1. Sign Up");
+            System.out.println("2. Login");
+            System.out.println("3. Exit");
+            System.out.print("Enter your choice: ");
+
+            int choice;
+
+            try {
+                choice = Integer.parseInt(sc.nextLine());
+            } catch (NumberFormatException e) {
+                System.out.println("Please enter a valid number!");
+                continue;
+            }
+
+            switch (choice) {
+
+                case 1:
+                    System.out.println("\n------ SIGN UP ------");
+
+                    System.out.print("Enter name: ");
+                    String name = sc.nextLine();
+
+                    System.out.print("Enter email: ");
+                    String email = sc.nextLine();
+
+                    System.out.print("Create password: ");
+                    String password = sc.nextLine();
+
+                    System.out.print("Confirm password: ");
+                    String confirmPassword = sc.nextLine();
+
+                    userService.register(
+                            name, email, password, confirmPassword
+                    );
+                    break;
+
+                case 2:
+                    System.out.println("\n------ LOGIN ------");
+
+                    System.out.print("Enter email: ");
+                    String loginEmail = sc.nextLine();
+
+                    System.out.print("Enter password: ");
+                    String loginPassword = sc.nextLine();
+
+                    User loggedInUser = userService.login(
+                            loginEmail, loginPassword
+                    );
+
+                    if (loggedInUser != null) {
+                        System.out.println("Welcome, "
+                                + loggedInUser.getName() + "!");
+                        System.out.println("Your role: "
+                                + loggedInUser.getRole());
+                    }
+                    break;
+
+                case 3:
+                    System.out.println("Thank you for using Loop It!");
+                    sc.close();
+                    return;
+
+                default:
+                    System.out.println("Invalid choice!");
+            }
+        }
     }
 }
