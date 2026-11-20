@@ -1,12 +1,13 @@
 package model;
 
+// 20.11.2026 - AKSHITA KAUSHIK
 public class User {
     private int userId;
     private String name;
     private String email;
     private String password;
-    private String role;
-    public User(int userId, String name, String email, String password, String role) {
+    private Role role;
+    public User(int userId, String name, String email, String password, Role role) {
         this.userId = userId;
         this.name = name;
         this.email = email;
@@ -25,7 +26,7 @@ public class User {
     public String getPassword() {
         return password;
     }
-    public String getRole() {
+    public Role getRole() {
         return role;
     }
 }

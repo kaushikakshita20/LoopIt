@@ -1,10 +1,22 @@
-// 16.11.2026 - AKSHITA KAUSHIK
 package service;
+
+// 20.11.2026 - AKSHITA KAUSHIK
 import model.User;
+import model.Role;
 import java.util.*;
 public class UserService {
     private HashMap<String, User> users = new HashMap<>();
     private int nextUserId = 1;
+    public UserService() {
+    User admin = new User(
+            nextUserId++,
+            "Loop It Admin",
+            "admin@loopit.com",
+            "Admin@123",
+            Role.ADMIN
+    );
+    users.put(admin.getEmail(), admin);
+}
     public boolean register(String name, String email, String password, String confirmPassword) {
         email = email.trim().toLowerCase();
         if (name.isBlank() || email.isBlank() || password.isBlank()) {
@@ -23,7 +35,12 @@ public class UserService {
             System.out.println("Passwords do not match!");
             return false;
         }
-        User user = new User(nextUserId++,name, email, password, "MEMBER");
+        User user = new User(
+                nextUserId++,
+                name,
+                email,
+                password,
+                Role.MEMBER);
         users.put(email, user);
         System.out.println("Account created successfully!");
         return true;

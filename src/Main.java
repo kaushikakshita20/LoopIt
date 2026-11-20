@@ -1,8 +1,10 @@
 // 17.11.2026- AKSHITA KAUSHIK
 import java.util.Scanner;
 import model.User;
+import model.Role;
 import service.UserService;
 import service.MemberDashboard;
+import service.AdminDashboard;
 public class Main {
     public static void main(String[] args) {
         Scanner sc = new Scanner(System.in);
@@ -35,8 +37,7 @@ public class Main {
                     System.out.print("Confirm password: ");
                     String confirmPassword = sc.nextLine();
                     userService.register(
-                            name, email, password, confirmPassword
-                    );
+                            name, email, password, confirmPassword);
                     break;
                 case 2:
                     System.out.println("\n------ LOGIN ------");
@@ -45,11 +46,19 @@ public class Main {
                     System.out.print("Enter password: ");
                     String loginPassword = sc.nextLine();
                     User loggedInUser = userService.login(
-                            loginEmail, loginPassword
-                    );
+                            loginEmail, loginPassword);
                     if (loggedInUser != null) {
-                        MemberDashboard dashboard = new MemberDashboard();
-                        dashboard.showDashboard(loggedInUser, sc);
+
+                        if (loggedInUser.getRole() == Role.ADMIN) {
+
+                            AdminDashboard dashboard = new AdminDashboard();
+                            dashboard.showDashboard(loggedInUser, sc);
+
+                        } else {
+
+                            MemberDashboard dashboard = new MemberDashboard();
+                            dashboard.showDashboard(loggedInUser, sc);
+                        }
                     }
                     break;
                 case 3:
