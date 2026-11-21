@@ -31,6 +31,7 @@ bin/
 ### Mac OS ###
 .DS_Store
 
+
 # Environment variables and secrets
 .env
 .env.*
@@ -38,3 +39,5 @@ bin/
 
 # Maven build output
 target/
+
+
