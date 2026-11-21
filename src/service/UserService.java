@@ -3,27 +3,33 @@ package service;
 // 20.11.2026 - AKSHITA KAUSHIK
 import model.User;
 import model.Role;
-import java.util.*;
+import java.util.HashMap;
+import java.util.Locale;
+
 public class UserService {
-    private HashMap<String, User> users = new HashMap<>();
+    private final HashMap<String, User> users = new HashMap<>();
     private int nextUserId = 1;
     public UserService() {
-    User admin = new User(
-            nextUserId++,
-            "Loop It Admin",
-            "admin@loopit.com",
-            "Admin@123",
-            Role.ADMIN
-    );
-    users.put(admin.getEmail(), admin);
-}
+        User admin = new User(
+                nextUserId++,
+                "Loop It Admin",
+                "admin@loopit.com",
+                "Admin@123",
+                Role.ADMIN);
+        users.put(admin.getEmail(), admin);
+    }
     public boolean register(String name, String email, String password, String confirmPassword) {
-        email = email.trim().toLowerCase();
-        if (name.isBlank() || email.isBlank() || password.isBlank()) {
+        if (name == null || email == null || password == null || confirmPassword == null) {
             System.out.println("All fields are required!");
             return false;
         }
-        if (!email.contains("@") || !email.contains(".")) {
+        name = name.trim();
+        email = email.trim().toLowerCase(Locale.ROOT);
+        if (name.isBlank() || email.isBlank() || password.isBlank() || confirmPassword.isBlank()) {
+            System.out.println("All fields are required!");
+            return false;
+        }
+        if (!email.matches("^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$")) {
             System.out.println("Invalid email!");
             return false;
         }
@@ -43,11 +49,15 @@ public class UserService {
                 Role.MEMBER);
         users.put(email, user);
         System.out.println("Account created successfully!");
+        System.out.println("Your User ID is: " + user.getUserId());
         return true;
     }
-    // Login
     public User login(String email, String password) {
-        email = email.trim().toLowerCase();
+        if (email == null || password == null || email.isBlank() || password.isBlank()) {
+            System.out.println("Email and password are required!");
+            return null;
+        }
+        email = email.trim().toLowerCase(Locale.ROOT);
         User user = users.get(email);
         if (user == null) {
             System.out.println("Account not found!");
