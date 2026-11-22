@@ -20,8 +20,12 @@ public class ResourceService {
             new LinkedHashMap<>();
 
     private HashSet<String> categories = new HashSet<>();
+    private int nextResourceId = 1;
 
-    // Add a resource with its original owner's ID
+    public int generateResourceId() {
+        return nextResourceId++;
+    }
+
     public boolean addResource(Resource resource, User owner) {
 
         if (resource == null || owner == null) {

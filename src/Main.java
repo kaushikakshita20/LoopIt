@@ -5,10 +5,12 @@ import model.Role;
 import service.UserService;
 import service.MemberDashboard;
 import service.AdminDashboard;
+import service.ResourceService;
 public class Main {
     public static void main(String[] args) {
         Scanner sc = new Scanner(System.in);
         UserService userService = new UserService();
+        ResourceService resourceService = new ResourceService();
         while (true) {
             System.out.println("\n================================");
             System.out.println("            LOOP IT");
@@ -56,7 +58,7 @@ public class Main {
 
                         } else {
 
-                            MemberDashboard dashboard = new MemberDashboard();
+                            MemberDashboard dashboard = new MemberDashboard(resourceService);
                             dashboard.showDashboard(loggedInUser, sc);
                         }
                     }
