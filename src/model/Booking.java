@@ -1,12 +1,9 @@
-// 19.11.2026 Rajni
-
 package model;
 
 import java.time.LocalDate;
 
 public class Booking {
 
-    // Variables
     private int bookingId;
     private User borrower;
     private Resource resource;
@@ -15,51 +12,62 @@ public class Booking {
     private LocalDate returnDate;
     private BookingStatus status;
 
-
-    // Constructor
     public Booking(int bookingId, User borrower, Resource resource,
                    LocalDate borrowDate, LocalDate dueDate,
                    LocalDate returnDate, BookingStatus status) {
+
+        this.bookingId = bookingId;
+        this.borrower = borrower;
+        this.resource = resource;
+        this.borrowDate = borrowDate;
+        this.dueDate = dueDate;
+        this.returnDate = returnDate;
+        this.status = status;
     }
 
     public int getBookingId() {
-        return 0;
+        return bookingId;
     }
 
     public User getBorrower() {
-        return null;
+        return borrower;
     }
 
     public Resource getResource() {
-        return null;
+        return resource;
     }
 
     public LocalDate getBorrowDate() {
-        return null;
+        return borrowDate;
     }
 
     public LocalDate getDueDate() {
-        return null;
+        return dueDate;
     }
 
     public LocalDate getReturnDate() {
-        return null;
+        return returnDate;
     }
 
     public BookingStatus getStatus() {
-        return null;
+        return status;
     }
 
     public void setReturnDate(LocalDate returnDate) {
+        this.returnDate = returnDate;
     }
 
     public void setStatus(BookingStatus status) {
+        this.status = status;
     }
 
     public void markAsReturned() {
+        this.returnDate = LocalDate.now();
+        this.status = BookingStatus.RETURNED;
     }
 
     public boolean isOverdue() {
-        return false;
+        return status == BookingStatus.BORROWED
+                && LocalDate.now().isAfter(dueDate);
     }
 }
