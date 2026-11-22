@@ -7,9 +7,11 @@ import java.util.List;
 import java.util.Scanner;
 public class MemberDashboard {
     private ResourceService resourceService;
+    private BookingService bookingService;
 
-    public MemberDashboard(ResourceService resourceService) {
+    public MemberDashboard(ResourceService resourceService,BookingService bookingService) {
         this.resourceService = resourceService;
+        this.bookingService = bookingService;
     }
     public void showDashboard(User user, Scanner sc) {
         while (true) {
@@ -84,10 +86,34 @@ public class MemberDashboard {
                     resourceService.addResource(resource, user);
                     break;
                 case 4:
-                    System.out.println("Borrow Resource - Coming Soon!");
+                    System.out.println("\n--- BORROW RESOURCE ---");
+
+                    resourceService.viewResources();
+
+                    System.out.print("Enter Resource ID to borrow: ");
+
+                    try {
+                        int borrowId = Integer.parseInt(sc.nextLine());
+                        bookingService.borrowResource(user, borrowId);
+                    } catch (NumberFormatException e) {
+                        System.out.println("Please enter a valid Resource ID!");
+                    }
+
                     break;
                 case 5:
-                    System.out.println("Return Resource - Coming Soon!");
+                    System.out.println("\n--- RETURN RESOURCE ---");
+
+                    bookingService.viewActiveBookings(user);
+
+                    System.out.print("Enter Booking ID to return: ");
+
+                    try {
+                        int bookingId = Integer.parseInt(sc.nextLine());
+                        bookingService.returnResource(bookingId, user);
+                    } catch (NumberFormatException e) {
+                        System.out.println("Please enter a valid Booking ID!");
+                    }
+
                     break;
                 case 6:
                     System.out.println("Borrowing History - Coming Soon!");

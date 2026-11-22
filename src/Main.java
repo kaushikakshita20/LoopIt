@@ -6,11 +6,22 @@ import service.UserService;
 import service.MemberDashboard;
 import service.AdminDashboard;
 import service.ResourceService;
+import service.BookingService;
+import service.WaitlistService;
+
 public class Main {
     public static void main(String[] args) {
         Scanner sc = new Scanner(System.in);
         UserService userService = new UserService();
         ResourceService resourceService = new ResourceService();
+
+        WaitlistService waitlistService = new WaitlistService();
+
+        BookingService bookingService = new BookingService(
+                resourceService,
+                waitlistService
+        );
+
         while (true) {
             System.out.println("\n================================");
             System.out.println("            LOOP IT");
@@ -58,7 +69,7 @@ public class Main {
 
                         } else {
 
-                            MemberDashboard dashboard = new MemberDashboard(resourceService);
+                            MemberDashboard dashboard = new MemberDashboard(resourceService,bookingService);
                             dashboard.showDashboard(loggedInUser, sc);
                         }
                     }
