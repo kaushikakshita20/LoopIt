@@ -125,4 +125,28 @@ public class UserService {
             return null;
         }
     }
+    public void viewAllUsers() {
+        String query = "SELECT user_id, name, email, role FROM users";
+        try (Connection con = DBConnection.getConnection();
+             PreparedStatement ps = con.prepareStatement(query);
+             ResultSet rs = ps.executeQuery()) {
+            System.out.println("\n========== REGISTERED USERS ==========");
+            boolean found = false;
+            while (rs.next()) {
+                found = true;
+                System.out.println(
+                        "User ID: " + rs.getInt("user_id")
+                                + " | Name: " + rs.getString("name")
+                                + " | Email: " + rs.getString("email")
+                                + " | Role: " + rs.getString("role")
+                );
+            }
+            if (!found) {
+                System.out.println("No users found.");
+            }
+        } catch (SQLException e) {
+            System.out.println("Unable to retrieve users!");
+            e.printStackTrace();
+        }
+    }
 }

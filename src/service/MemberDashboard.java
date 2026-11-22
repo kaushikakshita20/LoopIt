@@ -64,15 +64,11 @@ public class MemberDashboard {
                 case 3:
                     System.out.print("Enter resource name: ");
                     String name = sc.nextLine();
-
                     System.out.print("Enter category: ");
                     String category = sc.nextLine();
-
                     System.out.print("Enter description: ");
                     String description = sc.nextLine();
-
                     int resourceId = resourceService.generateResourceId();
-
                     Resource resource = new Resource(
                             resourceId,
                             name,

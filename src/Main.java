@@ -14,9 +14,7 @@ public class Main {
         Scanner sc = new Scanner(System.in);
         UserService userService = new UserService();
         ResourceService resourceService = new ResourceService();
-
         WaitlistService waitlistService = new WaitlistService();
-
         BookingService bookingService = new BookingService(
                 resourceService,
                 waitlistService
@@ -63,12 +61,13 @@ public class Main {
                     if (loggedInUser != null) {
 
                         if (loggedInUser.getRole() == Role.ADMIN) {
-
-                            AdminDashboard dashboard = new AdminDashboard();
+                            AdminDashboard dashboard = new AdminDashboard(
+                                    resourceService,
+                                    bookingService,
+                                    userService
+                            );
                             dashboard.showDashboard(loggedInUser, sc);
-
                         } else {
-
                             MemberDashboard dashboard = new MemberDashboard(resourceService,bookingService);
                             dashboard.showDashboard(loggedInUser, sc);
                         }

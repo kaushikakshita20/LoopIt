@@ -1,11 +1,23 @@
 // 20.11.2026 - AKSHITA KAUSHIK
+// 23.11.2026 - AKSHITA KAUSHIK - CONNECTED WITH DATA FROM MEMBERS DASHBOARD
 package service;
 import model.User;
+import model.Resource;
 import java.util.Scanner;
+import java.util.List;
 public class AdminDashboard {
+    private ResourceService resourceService;
+    private BookingService bookingService;
+    private UserService userService;
+    public AdminDashboard(ResourceService resourceService,
+                          BookingService bookingService,
+                          UserService userService) {
+        this.resourceService = resourceService;
+        this.bookingService = bookingService;
+        this.userService = userService;
+    }
     public void showDashboard(User user, Scanner sc) {
         while (true) {
-
             System.out.println("\n================================");
             System.out.println("             LOOP IT");
             System.out.println("         ADMIN DASHBOARD");
@@ -26,30 +38,107 @@ public class AdminDashboard {
             int choice;
             try {
                 choice = Integer.parseInt(sc.nextLine());
-
             } catch (NumberFormatException e) {
-
                 System.out.println("Please enter a valid number!");
                 continue;
             }
             switch (choice) {
                 case 1:
-                    System.out.println("Add Resource - Coming Soon!");
+                    System.out.println("\n--- ADD NEW RESOURCE ---");
+
+                    System.out.print("Enter resource name: ");
+                    String resourceName = sc.nextLine();
+
+                    System.out.print("Enter resource category: ");
+                    String resourceCategory = sc.nextLine();
+
+                    System.out.print("Enter resource description: ");
+                    String resourceDescription = sc.nextLine();
+                    if (resourceName.isBlank()
+                            || resourceCategory.isBlank()
+                            || resourceDescription.isBlank()) {
+                        System.out.println("All fields are required!");
+                        break;
+                    }
+                    int resourceId = resourceService.generateResourceId();
+                    Resource resource = new Resource(
+                            resourceId,
+                            resourceName,
+                            resourceCategory,
+                            resourceDescription,
+                            user.getUserId(),
+                            true
+                    );
+                    resourceService.addResource(resource, user);
                     break;
                 case 2:
-                    System.out.println("View All Resources - Coming Soon!");
+                    System.out.println("\n--- ALL RESOURCES ---");
+                    resourceService.viewResources();
                     break;
                 case 3:
-                    System.out.println("Search Resource - Coming Soon!");
+                    System.out.print("Enter resource name/category/keyword: ");
+                    String keyword = sc.nextLine();
+                    List<Resource> results = resourceService.searchResource(keyword);
+                    if (results.isEmpty()) {
+                        System.out.println("No matching resources found.");
+                    } else {
+                        System.out.println("\n--- SEARCH RESULTS ---");
+                        for (Resource r : results) {
+                            System.out.println(
+                                    "ID: " + r.getResourceId()
+                                            + " | Name: " + r.getName()
+                                            + " | Category: " + r.getCategory()
+                                            + " | Owner ID: " + r.getOwnerId()
+                                            + " | Available: " + r.isAvailable()
+                            );
+                        }
+                    }
                     break;
                 case 4:
-                    System.out.println("Update Resource - Coming Soon!");
+                    System.out.print("Enter Resource ID to update: ");
+                    try {
+                        int updateId = Integer.parseInt(sc.nextLine());
+
+                        Resource existing =
+                                resourceService.getResourceById(updateId);
+
+                        if (existing == null) {
+                            System.out.println("Resource not found!");
+                            break;
+                        }
+                        System.out.print("Enter new name: ");
+                        String name = sc.nextLine();
+
+                        System.out.print("Enter new category: ");
+                        String category = sc.nextLine();
+
+                        System.out.print("Enter new description: ");
+                        String description = sc.nextLine();
+
+                        resourceService.updateResource(
+                                updateId, name, category, description
+                        );
+
+                    } catch (NumberFormatException e) {
+                        System.out.println("Please enter a valid Resource ID!");
+                    }
                     break;
+
                 case 5:
-                    System.out.println("Delete Resource - Coming Soon!");
+                    System.out.print("Enter Resource ID to delete: ");
+
+                    try {
+                        int deleteId = Integer.parseInt(sc.nextLine());
+
+                        resourceService.removeResource(deleteId);
+
+                    } catch (NumberFormatException e) {
+                        System.out.println("Please enter a valid Resource ID!");
+                    }
                     break;
                 case 6:
-                    System.out.println("View All Bookings - Coming Soon!");
+                    System.out.println("\n--- ALL BOOKINGS ---");
+                    bookingService.viewBookings();
                     break;
                 case 7:
                     System.out.println("Manage Users - Coming Soon!");
