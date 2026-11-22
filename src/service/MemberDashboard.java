@@ -29,7 +29,6 @@ public class MemberDashboard {
             System.out.println("6. My Borrowing History");
             System.out.println("7. Sort Resources");
             System.out.println("8. Logout");
-
             System.out.println("================================");
             System.out.print("Enter your choice: ");
             int choice;
@@ -87,33 +86,25 @@ public class MemberDashboard {
                     break;
                 case 4:
                     System.out.println("\n--- BORROW RESOURCE ---");
-
                     resourceService.viewResources();
-
                     System.out.print("Enter Resource ID to borrow: ");
-
                     try {
                         int borrowId = Integer.parseInt(sc.nextLine());
                         bookingService.borrowResource(user, borrowId);
                     } catch (NumberFormatException e) {
                         System.out.println("Please enter a valid Resource ID!");
                     }
-
                     break;
                 case 5:
                     System.out.println("\n--- RETURN RESOURCE ---");
-
                     bookingService.viewActiveBookings(user);
-
                     System.out.print("Enter Booking ID to return: ");
-
                     try {
                         int bookingId = Integer.parseInt(sc.nextLine());
                         bookingService.returnResource(bookingId, user);
                     } catch (NumberFormatException e) {
                         System.out.println("Please enter a valid Booking ID!");
                     }
-
                     break;
                 case 6:
                     System.out.println("Borrowing History - Coming Soon!");
