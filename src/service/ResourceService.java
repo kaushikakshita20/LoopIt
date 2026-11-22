@@ -1,4 +1,5 @@
-// Ishita 18-11-26
+
+//ISHITA
 
 package service;
 
@@ -9,6 +10,9 @@ import java.util.LinkedHashMap;
 import java.util.HashSet;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
 
 public class ResourceService {
 
@@ -17,6 +21,7 @@ public class ResourceService {
 
     private HashSet<String> categories = new HashSet<>();
 
+    // Add a resource with its original owner's ID
     public boolean addResource(Resource resource, User owner) {
 
         if (resource == null || owner == null) {
@@ -34,6 +39,12 @@ public class ResourceService {
             return false;
         }
 
+        if (resource.getName() == null ||
+                resource.getName().isBlank()) {
+            System.out.println("Invalid resource name!");
+            return false;
+        }
+
         if (resource.getCategory() == null ||
                 resource.getCategory().isBlank()) {
             System.out.println("Invalid category!");
@@ -46,6 +57,7 @@ public class ResourceService {
         System.out.println("Resource uploaded successfully!");
         return true;
     }
+
 
     public void viewResources() {
 
@@ -64,9 +76,11 @@ public class ResourceService {
         }
     }
 
+
     public Resource getResourceById(int id) {
         return resources.get(id);
     }
+
 
     public List<Resource> getResourcesByOwner(int ownerId) {
 
@@ -81,6 +95,7 @@ public class ResourceService {
         return result;
     }
 
+
     public List<Resource> searchResource(String keyword) {
 
         List<Resource> result = new ArrayList<>();
@@ -90,6 +105,10 @@ public class ResourceService {
         }
 
         keyword = keyword.trim().toLowerCase();
+
+        if (keyword.isEmpty()) {
+            return result;
+        }
 
         for (Resource resource : resources.values()) {
 
@@ -112,6 +131,7 @@ public class ResourceService {
 
         return result;
     }
+
 
     public boolean updateResource(int id, String name,
                                   String category, String description) {
@@ -148,6 +168,7 @@ public class ResourceService {
         return true;
     }
 
+
     public boolean removeResource(int id) {
 
         Resource removed = resources.remove(id);
@@ -163,6 +184,7 @@ public class ResourceService {
         return true;
     }
 
+
     private void refreshCategories() {
 
         categories.clear();
@@ -172,7 +194,85 @@ public class ResourceService {
         }
     }
 
+
     public void viewCategories() {
         System.out.println("Categories: " + categories);
+    }
+
+
+    public List<Resource> sortResourcesByName() {
+
+        List<Resource> sortedResources =
+                new ArrayList<>(resources.values());
+
+        Collections.sort(sortedResources);
+
+        return sortedResources;
+    }
+
+
+    public List<Resource> sortResourcesByCategory() {
+
+        List<Resource> sortedResources =
+                new ArrayList<>(resources.values());
+
+        sortedResources.sort(
+                Comparator.comparing(
+                        Resource::getCategory,
+                        String.CASE_INSENSITIVE_ORDER
+                )
+        );
+
+        return sortedResources;
+    }
+
+
+    public List<Resource> sortResourcesByNameDescending() {
+
+        List<Resource> sortedResources =
+                new ArrayList<>(resources.values());
+
+        sortedResources.sort(
+                Comparator.comparing(
+                        Resource::getName,
+                        String.CASE_INSENSITIVE_ORDER
+                ).reversed()
+        );
+
+        return sortedResources;
+    }
+
+
+    public List<Resource> sortResourcesById() {
+
+        List<Resource> sortedResources =
+                new ArrayList<>(resources.values());
+
+        sortedResources.sort(
+                Comparator.comparingInt(Resource::getResourceId)
+        );
+
+        return sortedResources;
+    }
+
+
+    public List<Resource> getAvailableResources() {
+
+        List<Resource> availableResources = new ArrayList<>();
+
+        for (Resource resource : resources.values()) {
+
+            if (resource.isAvailable()) {
+                availableResources.add(resource);
+            }
+        }
+
+        return availableResources;
+    }
+
+
+    public Collection<Resource> getAllResources() {
+
+        return new ArrayList<>(resources.values());
     }
 }

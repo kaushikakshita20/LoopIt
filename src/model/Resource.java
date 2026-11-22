@@ -1,7 +1,7 @@
 //Ishita - 18/11/26
 package model;
 
-public class Resource {
+public class Resource implements Comparable<Resource> {
     private int resourceId;
     private String name;
     private String category;
@@ -56,5 +56,10 @@ public class Resource {
 
     public void setAvailable(boolean available) {
         this.available = available;
+    }
+
+    @Override
+    public int compareTo(Resource other) {
+        return this.name.compareToIgnoreCase(other.name);
     }
 }
