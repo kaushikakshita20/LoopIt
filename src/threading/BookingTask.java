@@ -1,18 +1,20 @@
-//23.11.2026- AKSHITA KAUSHIK
+// 23.11.2026- AKSHITA KAUSHIK
 package threading;
-import model.Resource;
+import model.User;
+import service.BookingService;
 public class BookingTask implements Runnable {
-    private Resource resource;
-    private int borrowerId;
-    public BookingTask(Resource resource, int borrowerId) {
-        this.resource = resource;
-        this.borrowerId = borrowerId;
+    private final BookingService bookingService;
+    private final User borrower;
+    private final int resourceId;
+    public BookingTask(BookingService bookingService,
+                       User borrower,
+                       int resourceId) {
+        this.bookingService = bookingService;
+        this.borrower = borrower;
+        this.resourceId = resourceId;
     }
-
     @Override
     public void run() {
-        System.out.println(Thread.currentThread().getName() + " is requesting resource: " + resource.getName());
-        System.out.println("Borrower ID: " + borrowerId);
-        System.out.println(Thread.currentThread().getName() + " completed booking request.");
+        bookingService.processBorrowRequest(borrower, resourceId);
     }
 }

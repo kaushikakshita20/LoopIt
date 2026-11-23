@@ -1,4 +1,4 @@
-// 17.11.2026- AKSHITA KAUSHIK
+// 17.11.2026 - AKSHITA KAUSHIK
 import java.util.Scanner;
 import model.User;
 import model.Role;
@@ -8,18 +8,13 @@ import service.AdminDashboard;
 import service.ResourceService;
 import service.BookingService;
 import service.WaitlistService;
-
 public class Main {
     public static void main(String[] args) {
         Scanner sc = new Scanner(System.in);
         UserService userService = new UserService();
         ResourceService resourceService = new ResourceService();
         WaitlistService waitlistService = new WaitlistService();
-        BookingService bookingService = new BookingService(
-                resourceService,
-                waitlistService
-        );
-
+        BookingService bookingService = new BookingService(resourceService, waitlistService);
         while (true) {
             System.out.println("\n================================");
             System.out.println("            LOOP IT");
@@ -47,8 +42,7 @@ public class Main {
                     String password = sc.nextLine();
                     System.out.print("Confirm password: ");
                     String confirmPassword = sc.nextLine();
-                    userService.register(
-                            name, email, password, confirmPassword);
+                    userService.register(name, email, password, confirmPassword);
                     break;
                 case 2:
                     System.out.println("\n------ LOGIN ------");
@@ -56,25 +50,20 @@ public class Main {
                     String loginEmail = sc.nextLine();
                     System.out.print("Enter password: ");
                     String loginPassword = sc.nextLine();
-                    User loggedInUser = userService.login(
-                            loginEmail, loginPassword);
+                    User loggedInUser = userService.login(loginEmail, loginPassword);
                     if (loggedInUser != null) {
-
                         if (loggedInUser.getRole() == Role.ADMIN) {
-                            AdminDashboard dashboard = new AdminDashboard(
-                                    resourceService,
-                                    bookingService,
-                                    userService
-                            );
+                            AdminDashboard dashboard = new AdminDashboard(resourceService, bookingService, userService);
                             dashboard.showDashboard(loggedInUser, sc);
                         } else {
-                            MemberDashboard dashboard = new MemberDashboard(resourceService,bookingService);
+                            MemberDashboard dashboard = new MemberDashboard(resourceService, bookingService);
                             dashboard.showDashboard(loggedInUser, sc);
                         }
                     }
                     break;
                 case 3:
                     System.out.println("Thank you for using Loop It!");
+                    bookingService.shutdownBookingQueue();
                     sc.close();
                     return;
                 default:

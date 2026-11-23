@@ -1,5 +1,5 @@
-// 17.11.2026- AKSHITA KAUSHIK
-//22.11.2026- ISHITA
+// 17.11.2026 - AKSHITA KAUSHIK
+// 22.11.2026 - ISHITA
 package service;
 import model.User;
 import model.Resource;
@@ -8,8 +8,7 @@ import java.util.Scanner;
 public class MemberDashboard {
     private ResourceService resourceService;
     private BookingService bookingService;
-
-    public MemberDashboard(ResourceService resourceService,BookingService bookingService) {
+    public MemberDashboard(ResourceService resourceService, BookingService bookingService) {
         this.resourceService = resourceService;
         this.bookingService = bookingService;
     }
@@ -45,19 +44,12 @@ public class MemberDashboard {
                 case 2:
                     System.out.print("Enter resource name/category/keyword: ");
                     String keyword = sc.nextLine();
-
-                    List<Resource> results =
-                            resourceService.searchResource(keyword);
-
+                    List<Resource> results = resourceService.searchResource(keyword);
                     if (results.isEmpty()) {
                         System.out.println("No matching resources found.");
                     } else {
                         for (Resource resource : results) {
-                            System.out.println(
-                                    resource.getResourceId() + " | "
-                                            + resource.getName() + " | "
-                                            + resource.getCategory()
-                            );
+                            System.out.println(resource.getResourceId() + " | " + resource.getName() + " | " + resource.getCategory());
                         }
                     }
                     break;
@@ -69,15 +61,7 @@ public class MemberDashboard {
                     System.out.print("Enter description: ");
                     String description = sc.nextLine();
                     int resourceId = resourceService.generateResourceId();
-                    Resource resource = new Resource(
-                            resourceId,
-                            name,
-                            category,
-                            description,
-                            user.getUserId(),
-                            true
-                    );
-
+                    Resource resource = new Resource(resourceId, name, category, description, user.getUserId(), true);
                     resourceService.addResource(resource, user);
                     break;
                 case 4:
@@ -86,7 +70,7 @@ public class MemberDashboard {
                     System.out.print("Enter Resource ID to borrow: ");
                     try {
                         int borrowId = Integer.parseInt(sc.nextLine());
-                        bookingService.borrowResource(user, borrowId);
+                        bookingService.requestBorrow(user, borrowId);
                     } catch (NumberFormatException e) {
                         System.out.println("Please enter a valid Resource ID!");
                     }
@@ -105,26 +89,21 @@ public class MemberDashboard {
                 case 6:
                     bookingService.viewBorrowingHistory(user);
                     break;
-                case 7: {
+                case 7:
                     System.out.println("\n--- SORT RESOURCES ---");
                     System.out.println("1. Sort by Name");
                     System.out.println("2. Sort by Category");
                     System.out.println("3. Sort by Name (Descending)");
                     System.out.println("4. Sort by ID");
-
                     System.out.print("Enter sorting choice: ");
-
                     int sortChoice;
-
                     try {
                         sortChoice = Integer.parseInt(sc.nextLine());
                     } catch (NumberFormatException e) {
                         System.out.println("Invalid choice!");
                         break;
                     }
-
                     List<Resource> sortedResources = null;
-
                     switch (sortChoice) {
                         case 1:
                             sortedResources = resourceService.sortResourcesByName();
@@ -141,18 +120,12 @@ public class MemberDashboard {
                         default:
                             System.out.println("Invalid sorting choice!");
                     }
-
                     if (sortedResources != null) {
                         for (Resource r : sortedResources) {
-                            System.out.println(
-                                    r.getResourceId() + " | "
-                                            + r.getName() + " | "
-                                            + r.getCategory()
-                            );
+                            System.out.println(r.getResourceId() + " | " + r.getName() + " | " + r.getCategory());
                         }
                     }
                     break;
-                }
                 case 8:
                     System.out.println("Logged out successfully!");
                     return;
