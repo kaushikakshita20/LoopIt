@@ -55,6 +55,11 @@ public class ResourceService {
             return false;
         }
 
+        if (!resource.isValidPricing()) {
+            System.out.println("Invalid borrowing type or pricing details!");
+            return false;
+        }
+
         resources.put(resource.getResourceId(), resource);
         categories.add(resource.getCategory());
 
@@ -71,14 +76,21 @@ public class ResourceService {
         }
 
         for (Resource resource : resources.values()) {
+
             System.out.println(
                     "ID: " + resource.getResourceId()
                             + " | Name: " + resource.getName()
+                            + " | Category: " + resource.getCategory()
                             + " | Owner ID: " + resource.getOwnerId()
                             + " | Available: " + resource.isAvailable()
+                            + " | Type: " + resource.getBorrowingType()
+                            + " | Price/Day: Rs. " + resource.getPricePerDay()
+                            + " | Deposit: Rs. " + resource.getSecurityDeposit()
             );
         }
     }
+
+
 
 
     public Resource getResourceById(int id) {

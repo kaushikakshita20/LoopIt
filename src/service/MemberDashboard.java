@@ -49,21 +49,103 @@ public class MemberDashboard {
                         System.out.println("No matching resources found.");
                     } else {
                         for (Resource resource : results) {
-                            System.out.println(resource.getResourceId() + " | " + resource.getName() + " | " + resource.getCategory());
+                            System.out.println(
+                                    "ID: " + resource.getResourceId()
+                                            + " | Name: " + resource.getName()
+                                            + " | Category: " + resource.getCategory()
+                                            + " | Type: " + resource.getBorrowingType()
+                                            + " | Price/Day: Rs. " + resource.getPricePerDay()
+                                            + " | Deposit: Rs. " + resource.getSecurityDeposit()
+                            );
                         }
+
                     }
                     break;
-                case 3:
+
+                case 3: {
+
+                    System.out.println("\n--- LEND A RESOURCE ---");
+
                     System.out.print("Enter resource name: ");
                     String name = sc.nextLine();
+
                     System.out.print("Enter category: ");
                     String category = sc.nextLine();
+
                     System.out.print("Enter description: ");
                     String description = sc.nextLine();
+
+                    System.out.println("\nSelect Borrowing Type:");
+                    System.out.println("1. FREE");
+                    System.out.println("2. PAID");
+                    System.out.print("Enter your choice: ");
+
+                    String borrowingType;
+                    double pricePerDay = 0;
+                    double securityDeposit = 0;
+
+                    int typeChoice;
+
+                    try {
+                        typeChoice = Integer.parseInt(sc.nextLine());
+                    } catch (NumberFormatException e) {
+                        System.out.println("Invalid borrowing type!");
+                        break;
+                    }
+
+                    if (typeChoice == 1) {
+
+                        borrowingType = "FREE";
+
+                        System.out.println("This resource will be FREE.");
+                        System.out.println("Price per day: Rs. 0");
+                        System.out.println("Security deposit: Rs. 0");
+
+                    } else if (typeChoice == 2) {
+
+                        borrowingType = "PAID";
+
+                        try {
+                            System.out.print("Enter price per day: Rs. ");
+                            pricePerDay = Double.parseDouble(sc.nextLine());
+
+                            System.out.print("Enter security deposit: Rs. ");
+                            securityDeposit = Double.parseDouble(sc.nextLine());
+
+                        } catch (NumberFormatException e) {
+                            System.out.println("Please enter valid amounts!");
+                            break;
+                        }
+
+                    } else {
+
+                        System.out.println("Invalid borrowing type!");
+                        break;
+                    }
+
                     int resourceId = resourceService.generateResourceId();
-                    Resource resource = new Resource(resourceId, name, category, description, user.getUserId(), true);
-                    resourceService.addResource(resource, user);
+                    Resource resource = new Resource(
+                            resourceId,
+                            name,
+                            category,
+                            description,
+                            user.getUserId(),
+                            true,
+                            borrowingType,
+                            pricePerDay,
+                            securityDeposit
+                    );
+                    if (resourceService.addResource(resource, user)) {
+                        System.out.println("Resource added successfully!");
+                    } else {
+                        System.out.println("Failed to add resource. Please check the details.");
+                    }
+
+
                     break;
+                }
+
+
                 case 4:
                     System.out.println("\n--- BORROW RESOURCE ---");
                     resourceService.viewResources();
@@ -121,8 +203,20 @@ public class MemberDashboard {
                             System.out.println("Invalid sorting choice!");
                     }
                     if (sortedResources != null) {
+
+                        if (sortedResources.isEmpty()) {
+                            System.out.println("No resources available to sort.");
+                        }
+
                         for (Resource r : sortedResources) {
-                            System.out.println(r.getResourceId() + " | " + r.getName() + " | " + r.getCategory());
+                            System.out.println(
+                                    "ID: " + r.getResourceId()
+                                            + " | Name: " + r.getName()
+                                            + " | Category: " + r.getCategory()
+                                            + " | Type: " + r.getBorrowingType()
+                                            + " | Price/Day: Rs. " + r.getPricePerDay()
+                                            + " | Deposit: Rs. " + r.getSecurityDeposit()
+                            );
                         }
                     }
                     break;
