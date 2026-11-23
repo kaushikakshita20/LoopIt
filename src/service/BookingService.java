@@ -214,5 +214,78 @@ public class BookingService {
             System.out.println("You have no active bookings.");
         }
     }
+    public void viewBorrowingHistory(User borrower) {
+
+        if (borrower == null) {
+            System.out.println("Invalid user!");
+            return;
+        }
+
+        boolean found = false;
+
+        System.out.println("\n--- MY BORROWING HISTORY ---");
+
+        for (Booking booking : bookings) {
+
+            if (booking.getBorrower().getUserId()
+                    == borrower.getUserId()) {
+
+                found = true;
+
+                System.out.println(
+                        "Booking ID: " + booking.getBookingId()
+                                + " | Resource: " + booking.getResource().getName()
+                                + " | Borrow Date: " + booking.getBorrowDate()
+                                + " | Due Date: " + booking.getDueDate()
+                                + " | Return Date: " + booking.getReturnDate()
+                                + " | Status: " + booking.getStatus()
+                );
+            }
+        }
+
+        if (!found) {
+            System.out.println("You have no borrowing history.");
+        }
+    }
+
+    public int getTotalBookingCount() {
+        return bookings.size();
+    }
+
+    public int getActiveBookingCount() {
+        int count = 0;
+
+        for (Booking booking : bookings) {
+            if (booking.getStatus() == BookingStatus.BORROWED) {
+                count++;
+            }
+        }
+
+        return count;
+    }
+
+    public int getReturnedBookingCount() {
+        int count = 0;
+
+        for (Booking booking : bookings) {
+            if (booking.getStatus() == BookingStatus.RETURNED) {
+                count++;
+            }
+        }
+
+        return count;
+    }
+
+    public int getOverdueBookingCount() {
+        int count = 0;
+
+        for (Booking booking : bookings) {
+            if (booking.isOverdue()) {
+                count++;
+            }
+        }
+
+        return count;
+    }
 
 }
