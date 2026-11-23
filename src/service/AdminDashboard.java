@@ -9,9 +9,7 @@ public class AdminDashboard {
     private ResourceService resourceService;
     private BookingService bookingService;
     private UserService userService;
-    public AdminDashboard(ResourceService resourceService,
-                          BookingService bookingService,
-                          UserService userService) {
+    public AdminDashboard(ResourceService resourceService, BookingService bookingService, UserService userService) {
         this.resourceService = resourceService;
         this.bookingService = bookingService;
         this.userService = userService;
@@ -45,13 +43,10 @@ public class AdminDashboard {
             switch (choice) {
                 case 1:
                     System.out.println("\n--- ADD NEW RESOURCE ---");
-
                     System.out.print("Enter resource name: ");
                     String resourceName = sc.nextLine();
-
                     System.out.print("Enter resource category: ");
                     String resourceCategory = sc.nextLine();
-
                     System.out.print("Enter resource description: ");
                     String resourceDescription = sc.nextLine();
                     if (resourceName.isBlank()
@@ -141,10 +136,33 @@ public class AdminDashboard {
                     bookingService.viewBookings();
                     break;
                 case 7:
-                    System.out.println("Manage Users - Coming Soon!");
+                    System.out.println("\n--- MANAGE USERS ---");
+                    userService.viewAllUsers();
                     break;
+
                 case 8:
-                    System.out.println("Generate Reports - Coming Soon!");
+                    System.out.println("\n========== LOOP IT REPORT ==========");
+                    int totalResources = 0;
+                    int availableResources = 0;
+                    int borrowedResources = 0;
+                    for (Resource r : resourceService.getAllResources()) {
+                        totalResources++;
+                        if (r.isAvailable()) {
+                            availableResources++;
+                        } else {
+                            borrowedResources++;
+                        }
+                    }
+                    System.out.println("\n--- RESOURCE STATISTICS ---");
+                    System.out.println("Total Resources: " + totalResources);
+                    System.out.println("Available Resources: " + availableResources);
+                    System.out.println("Currently Borrowed Resources: " + borrowedResources);
+                    System.out.println("\n--- BOOKING STATISTICS ---");
+                    System.out.println("Total Bookings: " + bookingService.getTotalBookingCount());
+                    System.out.println("Active Bookings: " + bookingService.getActiveBookingCount());
+                    System.out.println("Returned Bookings: " + bookingService.getReturnedBookingCount());
+                    System.out.println("Overdue Bookings: " + bookingService.getOverdueBookingCount());
+                    System.out.println("====================================");
                     break;
                 case 9:
                     System.out.println("Admin logged out successfully!");

@@ -103,7 +103,7 @@ public class MemberDashboard {
                     }
                     break;
                 case 6:
-                    System.out.println("Borrowing History - Coming Soon!");
+                    bookingService.viewBorrowingHistory(user);
                     break;
                 case 7: {
                     System.out.println("\n--- SORT RESOURCES ---");
