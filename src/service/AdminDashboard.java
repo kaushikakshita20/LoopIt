@@ -1,4 +1,5 @@
 // 20.11.2026 - AKSHITA KAUSHIK
+//YASHIKA GUPTA-DATABASE CONNECTIVITY
 // 23.11.2026 - AKSHITA KAUSHIK - CONNECTED WITH DATA FROM MEMBERS DASHBOARD
 package service;
 import model.User;
@@ -55,9 +56,8 @@ public class AdminDashboard {
                         System.out.println("All fields are required!");
                         break;
                     }
-                    int resourceId = resourceService.generateResourceId();
                     Resource resource = new Resource(
-                            resourceId,
+                            0,
                             resourceName,
                             resourceCategory,
                             resourceDescription,
