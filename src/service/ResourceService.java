@@ -281,7 +281,33 @@ public class ResourceService {
     }
 
 
+    
+    public boolean removeResource(int id) {
 
+        String query =
+                "DELETE FROM resources WHERE resource_id = ?";
+
+        try (Connection con = DBConnection.getConnection();
+             PreparedStatement ps = con.prepareStatement(query)) {
+
+            ps.setInt(1, id);
+
+            int rows = ps.executeUpdate();
+
+            if (rows > 0) {
+                System.out.println("Resource removed successfully!");
+                return true;
+            } else {
+                System.out.println("Resource not found!");
+            }
+
+        } catch (SQLException e) {
+            System.out.println("Error deleting resource!");
+            e.printStackTrace();
+        }
+
+        return false;
+    }
 
 
     
