@@ -232,38 +232,118 @@ public class ResourceService {
     }
 
 
- 
+    
+    public boolean updateResource(int id, String name,
+                                  String category, String description) {
+
+        if (name == null || name.isBlank()) {
+            System.out.println("Resource name cannot be empty!");
+            return false;
+        }
+
+        if (category == null || category.isBlank()) {
+            System.out.println("Resource category cannot be empty!");
+            return false;
+        }
+
+        if (description == null || description.isBlank()) {
+            System.out.println("Resource description cannot be empty!");
+            return false;
+        }
+
+        String query =
+                "UPDATE resources SET name = ?, category = ?, " +
+                        "description = ? WHERE resource_id = ?";
+
+        try (Connection con = DBConnection.getConnection();
+             PreparedStatement ps = con.prepareStatement(query)) {
+
+            ps.setString(1, name);
+            ps.setString(2, category);
+            ps.setString(3, description);
+            ps.setInt(4, id);
+
+            int rows = ps.executeUpdate();
+
+            if (rows > 0) {
+                System.out.println("Resource updated successfully!");
+                return true;
+            } else {
+                System.out.println("Resource not found!");
+            }
+
+        } catch (SQLException e) {
+            System.out.println("Error updating resource!");
+            e.printStackTrace();
+        }
+
+        return false;
+    }
 
 
-    // SORT BY NAME
+
+
+
+    
+    public void viewCategories() {
+
+        String query =
+                "SELECT DISTINCT category FROM resources";
+
+        try (Connection con = DBConnection.getConnection();
+             PreparedStatement ps = con.prepareStatement(query);
+             ResultSet rs = ps.executeQuery()) {
+
+            System.out.print("Categories: ");
+
+            boolean found = false;
+
+            while (rs.next()) {
+                found = true;
+                System.out.print(rs.getString("category") + " ");
+            }
+
+            if (!found) {
+                System.out.print("No categories found.");
+            }
+
+            System.out.println();
+
+        } catch (SQLException e) {
+            System.out.println("Error viewing categories!");
+            e.printStackTrace();
+        }
+    }
+
+
+    
     public List<Resource> sortResourcesByName() {
 
         return getSortedResources("name ASC");
     }
 
 
-    // SORT BY CATEGORY
+    
     public List<Resource> sortResourcesByCategory() {
 
         return getSortedResources("category ASC");
     }
 
 
-    // SORT BY NAME DESCENDING
+    
     public List<Resource> sortResourcesByNameDescending() {
 
         return getSortedResources("name DESC");
     }
 
 
-    // SORT BY ID
+   
     public List<Resource> sortResourcesById() {
 
         return getSortedResources("resource_id ASC");
     }
 
 
-    // COMMON SORTING METHOD
     private List<Resource> getSortedResources(String order) {
 
         List<Resource> result = new ArrayList<>();
@@ -287,8 +367,7 @@ public class ResourceService {
     }
 
 
-    // GET AVAILABLE RESOURCES
-    public List<Resource> getAvailableResources() {
+     public List<Resource> getAvailableResources() {
 
         List<Resource> result = new ArrayList<>();
 
@@ -312,7 +391,7 @@ public class ResourceService {
     }
 
 
-    // GET ALL RESOURCES
+    
     public Collection<Resource> getAllResources() {
 
         List<Resource> result = new ArrayList<>();
@@ -336,7 +415,7 @@ public class ResourceService {
     }
 
 
-    // CONVERT RESULTSET INTO RESOURCE OBJECT
+    
     private Resource extractResource(ResultSet rs)
             throws SQLException {
 
@@ -354,7 +433,7 @@ public class ResourceService {
     }
 
 
-    // DISPLAY RESOURCE
+    
     private void displayResource(Resource resource) {
 
         System.out.println(
