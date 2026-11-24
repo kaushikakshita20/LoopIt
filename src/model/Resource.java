@@ -41,7 +41,9 @@ public class Resource implements Comparable<Resource> {
         this.pricePerDay = pricePerDay;
         this.securityDeposit = securityDeposit;
     }
-
+    public void setResourceId(int resourceId) {
+        this.resourceId = resourceId;
+    }
 
     public int getResourceId() {
 
