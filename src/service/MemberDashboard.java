@@ -5,9 +5,11 @@ import model.User;
 import model.Resource;
 import java.util.List;
 import java.util.Scanner;
+import threading.ReportManager;
 public class MemberDashboard {
     private ResourceService resourceService;
     private BookingService bookingService;
+    private ReportManager reportManager = new ReportManager();
     public MemberDashboard(ResourceService resourceService, BookingService bookingService) {
         this.resourceService = resourceService;
         this.bookingService = bookingService;
@@ -27,7 +29,8 @@ public class MemberDashboard {
             System.out.println("5. Return a Resource");
             System.out.println("6. My Borrowing History");
             System.out.println("7. Sort Resources");
-            System.out.println("8. Logout");
+            System.out.println("8. View My Earnings Report");
+            System.out.println("9. Logout");
             System.out.println("================================");
             System.out.print("Enter your choice: ");
             int choice;
@@ -220,7 +223,15 @@ public class MemberDashboard {
                         }
                     }
                     break;
+
                 case 8:
+                    System.out.println("\n---MY EARNINGS REPORT---");
+                    reportManager.generateEarningsReport(
+                            user,
+                            bookingService.getAllBookings()
+                    );
+                    break;
+                case 9:
                     System.out.println("Logged out successfully!");
                     return;
                 default:

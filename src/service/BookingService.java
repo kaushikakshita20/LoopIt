@@ -5,6 +5,9 @@ import threading.BookingTask;
 import threading.ProducerConsumer;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.List;
+
+
 public class BookingService {
     private final ArrayList<Booking> bookings = new ArrayList<>();
     private final ResourceService resourceService;
@@ -265,5 +268,8 @@ public class BookingService {
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
         }
+    }
+    public synchronized List<Booking> getAllBookings() {
+        return new ArrayList<>(bookings);
     }
 }
