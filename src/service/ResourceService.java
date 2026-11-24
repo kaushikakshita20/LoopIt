@@ -1,4 +1,4 @@
-//YASHIKA GUPTA
+//YASHIKA GUPTA-ADD OF CRUD
 //ISHITA
 
 package service;
@@ -232,114 +232,7 @@ public class ResourceService {
     }
 
 
-    // UPDATE RESOURCE
-    public boolean updateResource(int id, String name,
-                                  String category, String description) {
-
-        if (name == null || name.isBlank()) {
-            System.out.println("Resource name cannot be empty!");
-            return false;
-        }
-
-        if (category == null || category.isBlank()) {
-            System.out.println("Resource category cannot be empty!");
-            return false;
-        }
-
-        if (description == null || description.isBlank()) {
-            System.out.println("Resource description cannot be empty!");
-            return false;
-        }
-
-        String query =
-                "UPDATE resources SET name = ?, category = ?, " +
-                        "description = ? WHERE resource_id = ?";
-
-        try (Connection con = DBConnection.getConnection();
-             PreparedStatement ps = con.prepareStatement(query)) {
-
-            ps.setString(1, name);
-            ps.setString(2, category);
-            ps.setString(3, description);
-            ps.setInt(4, id);
-
-            int rows = ps.executeUpdate();
-
-            if (rows > 0) {
-                System.out.println("Resource updated successfully!");
-                return true;
-            } else {
-                System.out.println("Resource not found!");
-            }
-
-        } catch (SQLException e) {
-            System.out.println("Error updating resource!");
-            e.printStackTrace();
-        }
-
-        return false;
-    }
-
-
-    // DELETE RESOURCE
-    public boolean removeResource(int id) {
-
-        String query =
-                "DELETE FROM resources WHERE resource_id = ?";
-
-        try (Connection con = DBConnection.getConnection();
-             PreparedStatement ps = con.prepareStatement(query)) {
-
-            ps.setInt(1, id);
-
-            int rows = ps.executeUpdate();
-
-            if (rows > 0) {
-                System.out.println("Resource removed successfully!");
-                return true;
-            } else {
-                System.out.println("Resource not found!");
-            }
-
-        } catch (SQLException e) {
-            System.out.println("Error deleting resource!");
-            e.printStackTrace();
-        }
-
-        return false;
-    }
-
-
-    // VIEW CATEGORIES
-    public void viewCategories() {
-
-        String query =
-                "SELECT DISTINCT category FROM resources";
-
-        try (Connection con = DBConnection.getConnection();
-             PreparedStatement ps = con.prepareStatement(query);
-             ResultSet rs = ps.executeQuery()) {
-
-            System.out.print("Categories: ");
-
-            boolean found = false;
-
-            while (rs.next()) {
-                found = true;
-                System.out.print(rs.getString("category") + " ");
-            }
-
-            if (!found) {
-                System.out.print("No categories found.");
-            }
-
-            System.out.println();
-
-        } catch (SQLException e) {
-            System.out.println("Error viewing categories!");
-            e.printStackTrace();
-        }
-    }
+ 
 
 
     // SORT BY NAME
