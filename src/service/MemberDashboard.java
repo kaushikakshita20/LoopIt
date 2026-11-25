@@ -126,9 +126,8 @@ public class MemberDashboard {
                         break;
                     }
 
-                    int resourceId = resourceService.generateResourceId();
                     Resource resource = new Resource(
-                            resourceId,
+                            0,  // ID generated automatically by MySQL
                             name,
                             category,
                             description,
