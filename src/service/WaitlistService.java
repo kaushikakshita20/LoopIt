@@ -3,17 +3,14 @@ package service;
 import model.User;
 import java.util.*;
 public class WaitlistService {
-    private final HashMap<Integer, Queue<User>> waitlists =
-            new HashMap<>();
+    private final HashMap<Integer, Queue<User>> waitlists = new HashMap<>();
+    // Adds a user to the resource's waiting list
     public synchronized void addToWaitlist(int resourceId, User user) {
         if (user == null) {
             System.out.println("Invalid user!");
             return;
         }
-        Queue<User> queue = waitlists.computeIfAbsent(
-                resourceId,
-                id -> new LinkedList<>()
-        );
+        Queue<User> queue = waitlists.computeIfAbsent(resourceId, id -> new LinkedList<>());
         for (User existingUser : queue) {
             if (existingUser.getUserId() == user.getUserId()) {
                 System.out.println("You are already in the waiting list!");
@@ -21,9 +18,29 @@ public class WaitlistService {
             }
         }
         queue.offer(user);
-        System.out.println(
-                "Added to waiting list successfully!"
-        );
+        System.out.println("Added to waiting list successfully!");
+    }
+    public synchronized User peekNextUser(int resourceId) {
+        Queue<User> queue = waitlists.get(resourceId);
+        if (queue == null || queue.isEmpty()) {
+            return null;
+        }
+        return queue.peek();
+    }
+    public synchronized boolean removeNextUser(int resourceId, int expectedUserId) {
+        Queue<User> queue = waitlists.get(resourceId);
+        if (queue == null || queue.isEmpty()) {
+            return false;
+        }
+        User nextUser = queue.peek();
+        if (nextUser.getUserId() != expectedUserId) {
+            return false;
+        }
+        queue.poll();
+        if (queue.isEmpty()) {
+            waitlists.remove(resourceId);
+        }
+        return true;
     }
     public synchronized User getNextUser(int resourceId) {
         Queue<User> queue = waitlists.get(resourceId);
@@ -39,9 +56,7 @@ public class WaitlistService {
     public synchronized void viewWaitlist(int resourceId) {
         Queue<User> queue = waitlists.get(resourceId);
         if (queue == null || queue.isEmpty()) {
-            System.out.println(
-                    "No users in the waiting list."
-            );
+            System.out.println("No users in the waiting list.");
             return;
         }
         System.out.println("Waiting List for Resource ID: " + resourceId);
