@@ -1,72 +1,149 @@
 // RAJNI
+// 25.11.2026 - AKSHITA KAUSHIK (ADDED
 package service;
 import model.User;
-import java.util.*;
+import model.Role;
+import database.DBConnection;
+import java.sql.*;
 public class WaitlistService {
-    private final HashMap<Integer, Queue<User>> waitlists = new HashMap<>();
-    // Adds a user to the resource's waiting list
-    public synchronized void addToWaitlist(int resourceId, User user) {
+    public void addToWaitlist(int resourceId, User user) {
         if (user == null) {
             System.out.println("Invalid user!");
             return;
         }
-        Queue<User> queue = waitlists.computeIfAbsent(resourceId, id -> new LinkedList<>());
-        for (User existingUser : queue) {
-            if (existingUser.getUserId() == user.getUserId()) {
+        String sql = "INSERT IGNORE INTO waitlist (resource_id, user_id) VALUES (?, ?)";
+        try (Connection con = DBConnection.getConnection();
+             PreparedStatement ps = con.prepareStatement(sql)) {
+            ps.setInt(1, resourceId);
+            ps.setInt(2, user.getUserId());
+            int rows = ps.executeUpdate();
+            if (rows > 0) {
+                System.out.println("Added to waiting list successfully!");
+            } else {
                 System.out.println("You are already in the waiting list!");
-                return;
             }
+        } catch (SQLException e) {
+            System.out.println("Error adding user to waiting list!");
+            e.printStackTrace();
         }
-        queue.offer(user);
-        System.out.println("Added to waiting list successfully!");
     }
-    public synchronized User peekNextUser(int resourceId) {
-        Queue<User> queue = waitlists.get(resourceId);
-        if (queue == null || queue.isEmpty()) {
-            return null;
+    public User peekNextUser(int resourceId) {
+        String sql = "SELECT user_id FROM waitlist WHERE resource_id = ? ORDER BY waitlist_id ASC LIMIT 1";
+        try (Connection con = DBConnection.getConnection();
+             PreparedStatement ps = con.prepareStatement(sql)) {
+            ps.setInt(1, resourceId);
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    return getUserById(rs.getInt("user_id"));
+                }
+            }
+        } catch (SQLException e) {
+            System.out.println("Error checking waiting list!");
+            e.printStackTrace();
         }
-        return queue.peek();
+        return null;
     }
-    public synchronized boolean removeNextUser(int resourceId, int expectedUserId) {
-        Queue<User> queue = waitlists.get(resourceId);
-        if (queue == null || queue.isEmpty()) {
+    public boolean removeNextUser(int resourceId, int expectedUserId) {
+        String sqlFind = "SELECT waitlist_id, user_id FROM waitlist WHERE resource_id = ? ORDER BY waitlist_id ASC LIMIT 1";
+        String sqlDelete = "DELETE FROM waitlist WHERE waitlist_id = ?";
+        try (Connection con = DBConnection.getConnection()) {
+            con.setAutoCommit(false);
+            try {
+                int waitlistId;
+                try (PreparedStatement ps = con.prepareStatement(sqlFind)) {
+                    ps.setInt(1, resourceId);
+                    try (ResultSet rs = ps.executeQuery()) {
+                        if (!rs.next()) {
+                            con.rollback();
+                            return false;
+                        }
+                        if (rs.getInt("user_id") != expectedUserId) {
+                            con.rollback();
+                            return false;
+                        }
+                        waitlistId = rs.getInt("waitlist_id");
+                    }
+                }
+                try (PreparedStatement ps = con.prepareStatement(sqlDelete)) {
+                    ps.setInt(1, waitlistId);
+                    if (ps.executeUpdate() == 0) {
+                        con.rollback();
+                        return false;
+                    }
+                }
+                con.commit();
+                return true;
+            } catch (SQLException e) {
+                con.rollback();
+                throw e;
+            } finally {
+                con.setAutoCommit(true);
+            }
+        } catch (SQLException e) {
+            System.out.println("Error removing user from waiting list!");
+            e.printStackTrace();
             return false;
         }
-        User nextUser = queue.peek();
-        if (nextUser.getUserId() != expectedUserId) {
-            return false;
-        }
-        queue.poll();
-        if (queue.isEmpty()) {
-            waitlists.remove(resourceId);
-        }
-        return true;
     }
-    public synchronized User getNextUser(int resourceId) {
-        Queue<User> queue = waitlists.get(resourceId);
-        if (queue == null || queue.isEmpty()) {
-            return null;
-        }
-        User nextUser = queue.poll();
-        if (queue.isEmpty()) {
-            waitlists.remove(resourceId);
+    public User getNextUser(int resourceId) {
+        User nextUser = peekNextUser(resourceId);
+        if (nextUser != null) {
+            removeNextUser(resourceId, nextUser.getUserId());
         }
         return nextUser;
     }
-    public synchronized void viewWaitlist(int resourceId) {
-        Queue<User> queue = waitlists.get(resourceId);
-        if (queue == null || queue.isEmpty()) {
-            System.out.println("No users in the waiting list.");
-            return;
-        }
-        System.out.println("Waiting List for Resource ID: " + resourceId);
-        int position = 1;
-        for (User user : queue) {
-            System.out.println(position++ + ". " + user.getName());
+    public void viewWaitlist(int resourceId) {
+        String sql = "SELECT u.user_id, u.name FROM waitlist w JOIN users u ON w.user_id = u.user_id WHERE w.resource_id = ? ORDER BY w.waitlist_id ASC";
+        try (Connection con = DBConnection.getConnection();
+             PreparedStatement ps = con.prepareStatement(sql)) {
+            ps.setInt(1, resourceId);
+            try (ResultSet rs = ps.executeQuery()) {
+                boolean found = false;
+                int position = 1;
+                System.out.println("Waiting List for Resource ID: " + resourceId);
+                while (rs.next()) {
+                    found = true;
+                    System.out.println(position++ + ". " + rs.getString("name") + " (User ID: " + rs.getInt("user_id") + ")");
+                }
+                if (!found) {
+                    System.out.println("No users in the waiting list.");
+                }
+            }
+        } catch (SQLException e) {
+            System.out.println("Error viewing waiting list!");
+            e.printStackTrace();
         }
     }
-    public synchronized int getWaitlistSize(int resourceId) {
-        Queue<User> queue = waitlists.get(resourceId);
-        return (queue == null) ? 0 : queue.size();
+    public int getWaitlistSize(int resourceId) {
+        String sql = "SELECT COUNT(*) FROM waitlist WHERE resource_id = ?";
+        try (Connection con = DBConnection.getConnection();
+             PreparedStatement ps = con.prepareStatement(sql)) {
+            ps.setInt(1, resourceId);
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getInt(1);
+                }
+            }
+        } catch (SQLException e) {
+            System.out.println("Error counting waiting list!");
+            e.printStackTrace();
+        }
+        return 0;
+    }
+    private User getUserById(int userId) {
+        String sql = "SELECT * FROM users WHERE user_id = ?";
+        try (Connection con = DBConnection.getConnection();
+             PreparedStatement ps = con.prepareStatement(sql)) {
+            ps.setInt(1, userId);
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    return new User(rs.getInt("user_id"), rs.getString("name"), rs.getString("email"), rs.getString("password"), Role.valueOf(rs.getString("role")));
+                }
+            }
+        } catch (SQLException e) {
+            System.out.println("Error fetching user details!");
+            e.printStackTrace();
+        }
+        return null;
     }
 }
