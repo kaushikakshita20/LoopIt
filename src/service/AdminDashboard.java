@@ -136,9 +136,74 @@ public class AdminDashboard {
                     bookingService.viewBookings();
                     break;
                 case 7:
-                    System.out.println("\n--- MANAGE USERS ---");
-                    userService.viewAllUsers();
-                    break;
+
+    while (true) {
+
+        System.out.println("\n========== MANAGE USERS ==========");
+        System.out.println("1. View All Users");
+        System.out.println("2. Block User");
+        System.out.println("3. Unblock User");
+        System.out.println("4. Back");
+        System.out.print("Enter your choice: ");
+
+        int userChoice;
+
+        try {
+            userChoice = Integer.parseInt(sc.nextLine());
+        } catch (NumberFormatException e) {
+            System.out.println("Please enter a valid number!");
+            continue;
+        }
+
+        switch (userChoice) {
+
+            case 1:
+                userService.viewAllUsers();
+                break;
+
+            case 2:
+
+                userService.viewAllUsers();
+
+                System.out.print("Enter User ID to block: ");
+
+                try {
+                    int blockId = Integer.parseInt(sc.nextLine());
+                    userService.blockUser(blockId);
+                } catch (NumberFormatException e) {
+                    System.out.println("Invalid User ID!");
+                }
+
+                break;
+
+            case 3:
+
+                userService.viewAllUsers();
+
+                System.out.print("Enter User ID to unblock: ");
+
+                try {
+                    int unblockId = Integer.parseInt(sc.nextLine());
+                    userService.unblockUser(unblockId);
+                } catch (NumberFormatException e) {
+                    System.out.println("Invalid User ID!");
+                }
+
+                break;
+
+            case 4:
+                break;
+
+            default:
+                System.out.println("Invalid choice!");
+        }
+
+        if (userChoice == 4) {
+            break;
+        }
+    }
+
+    break;
 
                 case 8:
                     System.out.println("\n========== LOOP IT REPORT ==========");
